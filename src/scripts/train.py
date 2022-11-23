@@ -9,6 +9,8 @@ from transformers import T5Tokenizer
 from ..data.dataset import FeedbackPrizeDataModule
 from ..models.EncT5 import EncT5MultiRegressModel
 
+from pytorch_lightning.loggers import TensorBoardLogger
+
 def train(
     train_path : PathLike,
     max_epochs : int = 10,
@@ -27,7 +29,9 @@ def train(
         tokenizer=tokenizer,
         batch_size=batch_size
     )
-    trainer = pl.Trainer(precision=32,max_epochs=max_epochs,accelerator=acc)
+
+    logger = TensorBoardLogger(save_dir="./tb_logs",name=model.name)
+    trainer = pl.Trainer(precision=32,max_epochs=max_epochs,accelerator=acc,logger=logger)
 
     trainer.fit(model,datamodule)
 
