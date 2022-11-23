@@ -33,7 +33,7 @@ class MiddleModule(pl.LightningModule):
         y = batch[-1]
 
         if self.mean is not None and self.std is not None:
-            y = (batch.y - self.mean) / self.std
+            y = (y - self.mean) / self.std
 
         y_hat = self(batch)
 
