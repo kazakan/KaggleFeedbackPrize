@@ -49,23 +49,25 @@ class MiddleModule(pl.LightningModule):
         if self.mean is not None and self.std is not None:
             y_hat = y_hat*self.std + self.mean
 
-        loss = self.mseloss(y_hat.squeeze().float(),y.float())
-
-        return {'MSE':loss.detach(),'n_rows':y_hat.shape[0]}
+        return {'y_hat':y_hat, 'y':y}
 
     def validation_epoch_end(self,outputs):
-        sum_square_err = 0
-        n_rows = 0
+        y_hats = []
+        ys = []
         for output in outputs:
-            sum_square_err += (output['MSE'])*output['n_rows']
-            n_rows += output['n_rows']
+            y_hats.append(output['y_hat'])
+            ys.append(output['y'])
 
-        total_metric = sum_square_err / n_rows
+        y_hats = torch.cat(y_hats,axis=0)
+        ys = torch.cat(ys,axis=0)
 
-        print(f"Epoch {self.current_epoch} MSE:{total_metric}")
-        self.log("MSE",total_metric ,on_step=False, on_epoch=True)
+        mse_per_cols = torch.sqrt(torch.sum(torch.square(y_hats - ys),axis=0))
+        mcrmse = torch.mean(mse_per_cols)
 
-        return {"MSE" : total_metric}
+        print(f"Epoch {self.current_epoch} MCRMSE:{mcrmse}")
+        self.log("MCRMSE",mcrmse ,on_step=False, on_epoch=True)
+
+        return {"MCRMSE" : mcrmse}
 
     def test_step(self,batch,batch_idx):
         y_hat = self(batch).detach().cpu().numpy()
