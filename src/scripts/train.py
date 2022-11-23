@@ -9,6 +9,7 @@ from pathlib import Path
 
 if __name__ == "__main__":
     
+    pl.seed_everything(42)
 
     model = EncT5MultiRegressModel()
     
