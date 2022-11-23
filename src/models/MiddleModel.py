@@ -17,12 +17,14 @@ class MiddleModule(pl.LightningModule):
 
     def __init__(self,
             name : str = "noname",
+            lr : float = 1e-5,
             mean : float = None,
             std : float = None,
         ):
         super().__init__()
 
         self.name = name
+        self.lr = lr
         self.mean = mean
         self.std = std
 
@@ -103,8 +105,8 @@ class MiddleModule(pl.LightningModule):
         return ret, metadata
 
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(),lr=0.0005)
-        lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2, eta_min=0.0001, last_epoch=-1)
+        optimizer = torch.optim.Adam(self.parameters(),lr=self.lr)
+        lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2, eta_min=self.lr/5, last_epoch=-1)
         
         return [optimizer],[lr_scheduler]
    

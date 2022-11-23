@@ -8,10 +8,11 @@ class EncT5MultiRegressModel(MiddleModule):
 
     def __init__(self, 
         dropout=0.1,
+        lr : float = 1e-5,
         mean: float = None, 
         std: float = None, 
     ):
-        super().__init__("EncT5MultiRegress", mean, std)
+        super().__init__("EncT5MultiRegress", lr = lr, mean = mean, std = std)
 
         config = T5Config.from_pretrained("t5-base")
 

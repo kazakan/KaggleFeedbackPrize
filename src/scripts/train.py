@@ -17,11 +17,12 @@ def train(
     batch_size : int = 32,
     model_save_path : Optional[PathLike] = './model.pt',
     tokenizer_save_path : Optional[PathLike] = './tokenizer.pt',
-    acc : str = 'cpu'
+    acc : str = 'cpu',
+    lr : float = 1e-5
 ):
     pl.seed_everything(42)
 
-    model = EncT5MultiRegressModel(mean=3.1,std=0.6)
+    model = EncT5MultiRegressModel(mean=3.1,std=0.6,lr=lr)
     
     tokenizer = T5Tokenizer.from_pretrained("t5-base")
     datamodule = FeedbackPrizeDataModule(
@@ -48,6 +49,7 @@ if __name__ == "__main__":
     parser.add_argument('--model_save_path',type=Path,default='./model.pt')
     parser.add_argument('--tokenizer_save_path', type=Path,default='./')
     parser.add_argument('--acc',type=str,default='cpu')
+    parser.add_argument('--lr',type=float,default=1e-5)
 
     args = parser.parse_args()
 
@@ -57,5 +59,6 @@ if __name__ == "__main__":
         args.batch_size,
         args.model_save_path,
         args.tokenizer_save_path,
-        args.acc
+        args.acc,
+        args.lr
     )
