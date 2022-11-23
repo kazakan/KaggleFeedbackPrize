@@ -21,7 +21,7 @@ def train(
 ):
     pl.seed_everything(42)
 
-    model = EncT5MultiRegressModel()
+    model = EncT5MultiRegressModel(mean=3.1,std=0.6)
     
     tokenizer = T5Tokenizer.from_pretrained("t5-base")
     datamodule = FeedbackPrizeDataModule(
