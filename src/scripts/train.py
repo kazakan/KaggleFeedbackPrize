@@ -14,7 +14,8 @@ def train(
     max_epochs : int = 10,
     batch_size : int = 32,
     model_save_path : Optional[PathLike] = './model.pt',
-    tokenizer_save_path : Optional[PathLike] = './tokenizer.pt'
+    tokenizer_save_path : Optional[PathLike] = './tokenizer.pt',
+    acc : str = 'cpu'
 ):
     pl.seed_everything(42)
 
@@ -26,7 +27,7 @@ def train(
         tokenizer=tokenizer,
         batch_size=batch_size
     )
-    trainer = pl.Trainer(precision=32,max_epochs=max_epochs)
+    trainer = pl.Trainer(precision=32,max_epochs=max_epochs,accelerator=acc)
 
     trainer.fit(model,datamodule)
 
@@ -42,6 +43,7 @@ if __name__ == "__main__":
     parser.add_argument('--batch_size',type=int,default=32)
     parser.add_argument('--model_save_path',type=Path,default='./model.pt')
     parser.add_argument('--tokenizer_save_path', type=Path,default='./tokenizer.pt')
+    parser.add_argument('--acc',type=str,default='cpu')
 
     args = parser.parse_args()
 
@@ -50,5 +52,6 @@ if __name__ == "__main__":
         args.max_epochs,
         args.batch_size,
         args.model_save_path,
-        args.tokenizer_save_path
+        args.tokenizer_save_path,
+        args.acc
     )
