@@ -6,6 +6,8 @@ import numpy as np
 from datetime import datetime
 import pathlib
 
+from ..utils import mcrmse
+
 
 class MiddleModule(pl.LightningModule):
 
@@ -24,9 +26,6 @@ class MiddleModule(pl.LightningModule):
         self.mean = mean
         self.std = std
 
-        self.mseloss = torch.nn.MSELoss()
-
-
     def forward(self,batch):
         raise NotImplementedError
 
@@ -38,7 +37,7 @@ class MiddleModule(pl.LightningModule):
 
         y_hat = self(batch)
 
-        loss = self.mseloss(y_hat.squeeze().float(),y.float())
+        loss = mcrmse(y_hat.squeeze().float(),y.float())
         return loss
 
     def validation_step(self,batch,batch_idx):
@@ -61,13 +60,12 @@ class MiddleModule(pl.LightningModule):
         y_hats = torch.cat(y_hats,axis=0)
         ys = torch.cat(ys,axis=0)
 
-        mse_per_cols = torch.sqrt(torch.sum(torch.square(y_hats - ys),axis=0))
-        mcrmse = torch.mean(mse_per_cols)
+        score = mcrmse(y_hats,ys)
 
-        print(f"Epoch {self.current_epoch} MCRMSE:{mcrmse}")
-        self.log("MCRMSE",mcrmse ,on_step=False, on_epoch=True)
+        print(f"Epoch {self.current_epoch} MCRMSE:{score}")
+        self.log("MCRMSE",score ,on_step=False, on_epoch=True)
 
-        return {"MCRMSE" : mcrmse}
+        return {"MCRMSE" : score}
 
     def test_step(self,batch,batch_idx):
         y_hat = self(batch).detach().cpu().numpy()
