@@ -32,7 +32,7 @@ def train(
     trainer.fit(model,datamodule)
 
     torch.save(model,model_save_path)
-    torch.save(tokenizer,tokenizer_save_path)
+    tokenizer.save_pretrained(tokenizer_save_path)
 
 
 if __name__ == "__main__":
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     parser.add_argument('--max_epochs',type=int,default=10)
     parser.add_argument('--batch_size',type=int,default=32)
     parser.add_argument('--model_save_path',type=Path,default='./model.pt')
-    parser.add_argument('--tokenizer_save_path', type=Path,default='./tokenizer.pt')
+    parser.add_argument('--tokenizer_save_path', type=Path,default='./')
     parser.add_argument('--acc',type=str,default='cpu')
 
     args = parser.parse_args()

@@ -21,7 +21,7 @@ def test(
     pl.seed_everything(42)
 
     model = torch.load(model_path)
-    tokenizer = torch.load(tokenizer_path)
+    tokenizer = T5Tokenizer.from_pretrained(tokenizer_path)
 
     datamodule = FeedbackPrizeDataModule(
         test_path=test_path,
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     parser.add_argument('submission_path',type=Path)
     parser.add_argument('--batch_size',type=int,default=32)
     parser.add_argument('--model_path',type=Path,default='./model.pt')
-    parser.add_argument('--tokenizer_path', type=Path,default='./tokenizer.pt')
+    parser.add_argument('--tokenizer_path', type=Path,default='./')
     parser.add_argument('--acc',type=str,default='cpu')
 
     args = parser.parse_args()
